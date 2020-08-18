@@ -97,12 +97,27 @@ func validatePhoneNumber(phoneNumber string, index int) *FileError {
 		return &emptyErr
 	}
 	numSlice := strings.Split(phoneNumber, "-")
-	if len(numSlice) != 3 || len(numSlice[0]) != 3 || len(numSlice[1]) != 3 || len(numSlice[2]) != 4 {
-		valError := FileError{
-			Line:     index,
-			ErrorMsg: fmt.Sprintf("PHONE_NUM:%s is an invald number", phoneNumber),
-		}
+	valError := FileError{
+		Line:     index,
+		ErrorMsg: fmt.Sprintf("PHONE_NUM:%s is an invald phone number", phoneNumber),
+	}
+	if len(numSlice) != 3 {
 		return &valError
+	}
+	for i, n := range numSlice {
+		_, err := strconv.Atoi(n)
+		if err != nil {
+			return &valError
+		}
+		if i <= 1 {
+			if len(n) != 3 {
+				return &valError
+			}
+		} else {
+			if len(n) != 4 {
+				return &valError
+			}
+		}
 	}
 	return nil
 }

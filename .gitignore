@@ -1,4 +1,4 @@
-./dirwatcher
+dirwatcher
 *.env
 input-dir
 out-dir

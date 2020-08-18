@@ -123,6 +123,9 @@ func (d DirWatch) GetFile(fileName string) (io.Reader, error) {
 
 //WriteJsonFile will write the json file with a same name as the csv file
 func (d DirWatch) WriteJsonFile(data []byte, filename string) {
+	if string(data) == "null" {
+		data = []byte("{}")
+	}
 	noExName := strings.Split(filename, ".")[0]
 	jsonName := fmt.Sprintf("%s/%s.json", d.outDir, noExName)
 	_, err := os.Stat(jsonName)
@@ -139,7 +142,9 @@ func (d DirWatch) WriteJsonFile(data []byte, filename string) {
 			return
 		}
 		SuccessLog(jsonName, "successfully wrote json file")
-		err = d.Db.InsertProcessedFile(filename)
+		if d.unique {
+			err = d.Db.InsertProcessedFile(filename)
+		}
 		if err != nil {
 			ErrWarnLog(err, fmt.Sprintf("error recording processed file: %s", filename))
 		}
@@ -162,7 +167,9 @@ func (d DirWatch) WriteJsonFile(data []byte, filename string) {
 		return
 	}
 	//mark file here just incase there is a file in the dir already...
-	err = d.Db.InsertProcessedFile(filename)
+	if d.unique {
+		err = d.Db.InsertProcessedFile(filename)
+	}
 	SuccessLog(jsonName, "successfully wrote json file")
 
 }
