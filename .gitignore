@@ -1,0 +1,5 @@
+./dirwatcher
+*.env
+input-dir
+out-dir
+error-dir
