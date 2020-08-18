@@ -9,22 +9,27 @@ import (
 	"strings"
 )
 
+//UserName in the structure of the output json
 type UserName struct {
 	First  string `json:"first"`
 	Middle string `json:"middle,omitempty"`
 	Last   string `json:"last"`
 }
+
+//User in the structure of the output json
 type User struct {
 	Id    int32    `json:"id"`
 	Name  UserName `json:"name"`
 	Phone string   `json:"string"`
 }
+
+//FileError to record the errors in the file for writing later
 type FileError struct {
 	Line     int
 	ErrorMsg string
 }
 
-//ParseCsvToJsonBytes will takes a reader so should be used for any file loading situiation.\
+//ParseCsvToJsonBytes will takes a reader so should be used for any file loading situiation.
 func ParseCsvToJsonBytes(data io.Reader) ([]byte, []FileError, error) {
 	rows, err := mapColumns(data)
 	if err != nil {

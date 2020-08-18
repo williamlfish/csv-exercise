@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	// psql import
 	_ "github.com/lib/pq"
 )
 
+//DBClient simple db struct for export/receiver funcs
 type DBClient struct {
 	DB *sql.DB
 }
@@ -25,6 +27,7 @@ func NewDBClient(user, pass, host, database string, port int) (*DBClient, error)
 	return &DBClient{DB: db}, nil
 }
 
+// CheckProcessedFile does a look up for the file and returns a bool if it exists
 func (d DBClient) CheckProcessedFile(fileName string) (bool, error) {
 	var selectedFileName string
 	query := "select file_name from processed_files where file_name = $1"
@@ -33,22 +36,21 @@ func (d DBClient) CheckProcessedFile(fileName string) (bool, error) {
 	case sql.ErrNoRows:
 		return false, nil
 	case nil:
-		fmt.Println(selectedFileName)
 		return true, nil
 	default:
 		return false, err
 	}
 }
 
+// InsertProcessedFile inserts the processed files name for a later lookup
 func (d DBClient) InsertProcessedFile(fileName string) error {
 	query := `insert into processed_files ( file_name, process_date)
 			  values ($1, $2)`
-	something, err := d.DB.Exec(
+	_, err := d.DB.Exec(
 		query,
 		fileName,
 		time.Now(),
 	)
-	fmt.Println(something)
 	if err != nil {
 		return err
 	}

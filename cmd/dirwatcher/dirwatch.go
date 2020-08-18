@@ -14,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// DirWatch main struct config for watching the input dir and writting other files out
 type DirWatch struct {
 	inDir    string
 	outDir   string
@@ -22,6 +23,7 @@ type DirWatch struct {
 	Db       parser.DBClient
 }
 
+// ExtractFileName will get the input filename from the path, as well as confirm it is a csv
 func (d DirWatch) ExtractFileName(filePath string) *string {
 	fi, err := os.Stat(filePath)
 	if err != nil {
@@ -47,6 +49,7 @@ func (d DirWatch) ExtractFileName(filePath string) *string {
 	return &fileName
 }
 
+// WatchInputDir watches the input dir for create events
 func (d DirWatch) WatchInputDir() {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -78,8 +81,8 @@ func (d DirWatch) WatchInputDir() {
 	<-done
 }
 
+//ProcessFile will process a new file added to the input dir
 func (d DirWatch) ProcessFile(fileName string) {
-	fmt.Println(d.unique, "d.uniue")
 	if d.unique {
 		hasProcessed, err := d.Db.CheckProcessedFile(fileName)
 		if err != nil {
@@ -107,6 +110,7 @@ func (d DirWatch) ProcessFile(fileName string) {
 	}
 }
 
+// GetFile gets the file data from the input dir
 func (d DirWatch) GetFile(fileName string) (io.Reader, error) {
 	path := fmt.Sprintf("%s/%s", d.inDir, fileName)
 	data, err := os.Open(path)
@@ -117,6 +121,7 @@ func (d DirWatch) GetFile(fileName string) (io.Reader, error) {
 	return data, nil
 }
 
+//WriteJsonFile will write the json file with a same name as the csv file
 func (d DirWatch) WriteJsonFile(data []byte, filename string) {
 	noExName := strings.Split(filename, ".")[0]
 	jsonName := fmt.Sprintf("%s/%s.json", d.outDir, noExName)
@@ -178,6 +183,7 @@ func buildErrorCsvData(errList []parser.FileError) [][]string {
 	return csvData
 }
 
+// WriteErrorFile writes the error csv file
 func (d DirWatch) WriteErrorFile(errList []parser.FileError, filename string) {
 	errName := fmt.Sprintf("%s/error-%s", d.errorDir, filename)
 	_, err := os.Stat(errName)
