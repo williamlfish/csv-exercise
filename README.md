@@ -65,6 +65,6 @@ I think 2 of the biggest assumtions I made are.
 "* once the application starts it watches _`input-directory`_ for any new files that need to be processed"  
 2. to have the -u flag. The docs mention only processing "new" files that have not been marked as processed, but also mentiones in a file name colision to write over the last one. So because of that I made the unique file name optional. 
 
-I also wasnt sure what kind of enviroment this should have lived in.. The psql db is probs overkill, but maybe not if this is living on like an ftp server where there can be tons and tons for files pouring in? 
+I also wasnt sure what kind of enviroment this should have lived in.. The psql db is probs overkill and had consitered just a flat file on disk to keep track.., but maybe not if this is living on like an ftp server where there can be tons and tons for files pouring in? 
 
 Also wanted to consiter "outgrowning" a dir watcher, so created the parser as its own package to be able to use it on a server that is acceping files from users, or from events that pull the files down from some kind of document store etc.
