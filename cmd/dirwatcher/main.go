@@ -90,6 +90,5 @@ func main() {
 		dirwatch.Db = *dbCon
 	}
 	checkMakeDirs(dirList)
-	// pass the db conn to defer the close
 	dirwatch.WatchInputDir()
 }
